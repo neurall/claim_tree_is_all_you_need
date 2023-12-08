@@ -9,13 +9,14 @@ cv = clientv.get_collection(name='verified-claims')
 f=cf.get(include= ['embeddings','metadatas'])
 v=cv.query(
     query_embeddings=f['embeddings'],
-    n_results=10,include=["metadatas"]
+    n_results=30,include=["metadatas",'distances']
 )
 ids=f['ids']
 urlsf=[x['url'] for x in f['metadatas']]
-urlsv=[x[0]['url'] for x in v['metadatas']]
 txt=''
 for i,id in enumerate(ids):
-    txt+=id+'\n'+urlsf[i]+'\n'+urlsv[i]+'\n'
+    txt+=id+'\n'+urlsf[i]+'\n'
+    for j,g in enumerate(v['metadatas'][i]):
+        txt+=g['url']+' '+str(v['distances'][i][j])+'\n'
 with open('results.txt', 'w') as f:
     f.write(txt)
