@@ -11,8 +11,7 @@ for file in os.listdir(csv_dir):
     if file.endswith('.csv'):
         fn=file.split('.')[0]
         print(file)
-        df = pd.read_csv(csv_dir+'/'+file)
-        df.columns=['blk','claim','date','verified_claim_url','true','speaker','verified_claim','article']
+        df = pd.read_csv(csv_dir+'/'+file, header=None, names=['blk','claim','date','verified_claim_url','true','speaker','verified_claim','article'])
         df['ids'] = df.reset_index().apply(lambda row: file + ',' +str(row['index']) , axis=1).tolist()# df['article'] = df['article'].fillna('') # df['docs'] = df.apply(lambda row: clean_text(row['article']), axis=1).tolist()
         df['speaker'] = df['speaker'].fillna('')
         df['docs'] = df.apply(lambda row: row['speaker'].lower()+' says '+clean_text(row['verified_claim'].replace('says','').strip())+' at '+row['date'], axis=1).tolist()

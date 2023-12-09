@@ -29,7 +29,6 @@ for file in os.listdir(csv_dir):
         else:
             suffix = ["st", "nd", "rd"][day % 10 - 1]
         when = when.replace(date.strftime('%d'), str(day) + suffix)
-
         where=fn.split('_',1)[1].replace('_',' ')
         txt=debate
         for index, row in df.iterrows():
