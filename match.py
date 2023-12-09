@@ -1,14 +1,8 @@
 import pandas as pd
 import os, chromadb
 
-print("Script is running, this might take a few minutes...")
-
-# Set the directory name for the database
-dirname = "fact-checking.db"
 total = 0
-
-# Set the directory path for the CSV files
-csv_dir = "../data_dry/politifact/" + dirname + "/"
+print("Script is running, this might take a few minutes...")
 
 # Initialize persistent clients for the fact-checking and verified claims databases
 clientf = chromadb.PersistentClient(path="fact-checking.db")
