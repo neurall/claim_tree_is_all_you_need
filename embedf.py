@@ -6,7 +6,7 @@ from clean import *#n_ctx=1500,
 print(openai.Model.list())
 dirname='fact-checking';total=0
 csv_dir='../data_dry/politifact/'+dirname+'/'
-model = 0#SentenceTransformer('WhereIsAI/UAE-Large-V1', device="cpu")
+model = SentenceTransformer('WhereIsAI/UAE-Large-V1', device="cpu")
 client = chromadb.PersistentClient(path=dirname+".db")#client.reset()
 collection = client.get_or_create_collection(name='data', metadata={"hnsw:space": "l2"}) # or ip or cosine
 for file in os.listdir(csv_dir):
