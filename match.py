@@ -1,6 +1,8 @@
 import pandas as pd
 import os, chromadb
 
+print("Script is running, this might take a few minutes...")
+
 # Set the directory name for the database
 dirname = "fact-checking.db"
 total = 0
@@ -45,3 +47,6 @@ for i, id in enumerate(ids):
 # Write the result text to a file
 with open("results.txt", "w") as f:
     f.write(txt)
+    print("Results file created!")
+
+print("Processing has finished.")
