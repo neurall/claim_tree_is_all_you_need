@@ -5,7 +5,7 @@
 # Importing necessary libraries
 from sentence_transformers import SentenceTransformer
 import pandas as pd
-import os, chromadb, time
+import os, chromadb, time,sys
 from clean import *  #  Shared text cleaning code
 
 # Setup for directory and initial variables
@@ -18,8 +18,9 @@ model = SentenceTransformer('WhereIsAI/UAE-Large-V1', device="cpu")
 
 # Setting up a database client and creating or retrieving a data collection
 client = chromadb.PersistentClient(path="known_claims.emb.db")
-collection = client.get_or_create_collection(name='data', metadata={"hnsw:space": "l2"})
+collection = client.get_or_create_collection(name='verified-claims', metadata={"hnsw:space": "l2"})
 
+total=0
 # Processing each CSV file in the designated directory
 for file in os.listdir(csv_dir):
     if file.endswith('.csv'):
@@ -28,6 +29,31 @@ for file in os.listdir(csv_dir):
 
         # Reading CSV file with specified column names
         df = pd.read_csv(csv_dir + '/' + file, header=None, names=['blk', 'claim', 'date', 'verified_claim_url', 'true', 'speaker', 'verified_claim', 'article'])
+        sf = pd.read_csv('summaries.emb/'+file)
+
+        df['ids'] = df.reset_index().apply(lambda row: file + ',' + str(row['index']), axis=1).tolist()
+        df['urls'] = df.reset_index().apply(lambda row: row['verified_claim_url'].split('statements/')[1].rstrip('/'), axis=1).tolist()
+        for i, row in sf.iterrows():
+            if row['ours']==0:
+                continue
+            text=clean_text(row['summary'])
+            embeddings = model.encode(text).tolist()
+            collection.upsert(ids=[str(df.loc[i, 'ids'])], embeddings=embeddings, metadatas=[{'url': df.loc[i, 'urls']}])
+            total+=1
+            print(total,end='\r')
+
+sys.exit()
+# Processing each CSV file in the designated directory
+for file in os.listdir(csv_dir):
+    if file.endswith('.csv'):
+        fn = file.split('.')[0]
+        print(file)
+
+        # Reading CSV file with specified column names
+        df = pd.read_csv(csv_dir + '/' + file, header=None, names=['blk', 'claim', 'date', 'verified_claim_url', 'true', 'speaker', 'verified_claim', 'article'])
+
+        sf = pd.read_csv('summaries.emb/'+file)
+
 
         # Generating unique identifiers for each row
         df['ids'] = df.reset_index().apply(lambda row: file + ',' + str(row['index']), axis=1).tolist()
