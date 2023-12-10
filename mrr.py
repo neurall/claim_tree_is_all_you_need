@@ -31,7 +31,7 @@ def calculate_mrr(file_path):
 
                 i += 1
 
-            # Calculate MRR based on the ranking
+            # Calculate the reciprocal sum
             if ranking > 0:
                 sum += 1 / ranking
 
@@ -47,5 +47,5 @@ def calculate_mrr(file_path):
     print('Reciprocal sum:', str(sum))
     print('MRR:', str(mrr))
 
-# Example usage with 'results.txt' file
+# Function call
 calculate_mrr('results.txt')
